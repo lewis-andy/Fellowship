@@ -330,7 +330,7 @@ a:focus {
 .bottom-container {
   display: flex;
   justify-content: space-around;
-  background-color: darkslategray;
+  background-color: cornflowerblue;
   padding: 20px;
 }
 
@@ -342,11 +342,11 @@ a:focus {
 }
 
 .column h3 {
-  color: steelblue;
+  color: black;
 }
 
 .column p {
-  color: antiquewhite;
+  color: black;
   margin-bottom: 10px;
 }
 
@@ -396,7 +396,81 @@ input {
   }
 }
 
-/* End bottom container */
+
 .bg-black {
   background-color: black;
+}
+/* End bottom container */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Offer Section Styles */
+.offer_section {
+  background-color: #fff;
+  padding: 50px 0;
+}
+
+.heading_container {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.heading_container h2 {
+  color: #333;
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.heading_container p {
+  color: #666;
+  font-size: 16px;
+}
+
+.content-box {
+  position: relative;
+}
+
+.img-box {
+  position: relative;
+  overflow: hidden;
+  width: 300px; /* Adjust the width of the image box */
+  height: 300px; /* Adjust the height of the image box */
+  border: 2px solid #ccc; /* Add border for style */
+  border-radius: 10px; /* Add border radius for rounded corners */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add shadow for depth effect */
+}
+
+.img-box img {
+  width: 100%; /* Ensure the image fills the container */
+  height: 100%; /* Ensure the image fills the container */
+  display: block;
+}
+
+.image-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+  transform: translateY(100%); /* Initial position for animation */
+  transition: transform 0.3s ease; /* Add transition effect */
+}
+
+.img-box:hover .image-caption {
+  transform: translateY(0); /* Slide the text up on hover */
+}
+
+/* Media Queries for Responsive Design */
+@media screen and (max-width: 768px) {
+  .img-box {
+    width: 150px; /* Adjust the width for smaller screens */
+    height: 150px; /* Adjust the height for smaller screens */
+  }
 }

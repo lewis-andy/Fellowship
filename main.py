@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -13,7 +13,7 @@ from wtforms.validators import DataRequired
 from flask import render_template, redirect, url_for, flash
 from datetime import datetime
 from wtforms import SelectField
-from flask import render_template, request
+from flask import render_template, request, jsonify
 from sqlalchemy.orm import joinedload
 
 app = Flask(__name__)
@@ -37,6 +37,11 @@ class User(db.Model):
 def validate_email(field):
     if User.query.filter_by(email=field.data).first():
         raise ValidationError('Email already exists.')
+
+
+admin_username = 'Lewis'
+admin_password = 'Andanje'
+admin_email = 'lewisandanje3@gmail.com'
 
 
 class RegistrationForm(FlaskForm):
@@ -93,6 +98,11 @@ def login():
 
         user = User.query.filter_by(email=email).first()
 
+        # Check if admin credentials are entered
+        if email == admin_email and password == admin_password:
+            session['admin_logged_in'] = True
+            return redirect(url_for('add_user'))
+
         # performing login authentication assuming all neccessary logic
 
         if user and bcrypt.check_password_hash(user.password, password):
@@ -103,6 +113,32 @@ def login():
             flash('Login unsuccessful. Please check email and password', 'danger')
 
     return render_template("login.html", form=form)
+
+
+@app.route('/Admin/add_user')
+def add_user():
+    if 'admin_logged_in' in session:
+        return render_template('Admin/add_user.html')
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route("/Admin/view_users")
+def view_users():
+    users = User.query.all()
+    return render_template("Admin/view_users.html", users=users)
+
+
+# function to delete users from  the table
+@app.route("/delete_user/<int:user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    global users
+    user_index = next((index for index, user in enumerate(users) if user["id"] == user_id), None)
+    if user_index is not None:
+        del users[user_index]
+        return jsonify({"message": "User deleted successfully"}), 200
+    else:
+        return jsonify({"message": "User not found"}), 404
 
 
 if __name__ == '__main__':

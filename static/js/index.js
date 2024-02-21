@@ -1,17 +1,34 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const slides = document.querySelectorAll('.slide');
-    const slideWrapper = document.querySelector('.slide-wrapper');
-    let index = 0;
+// JavaScript for slider animation
 
-    function showSlide() {
-        slideWrapper.style.transition = 'transform 0.5s ease-in-out';
-        slideWrapper.style.transform = `translateX(-${index * 100}%)`;
+let currentIndex = 0;
+const slides = document.querySelectorAll('.slide');
+const totalSlides = slides.length;
+
+function showSlide(index) {
+    slides.forEach(slide => {
+        slide.style.display = 'none';
+    });
+
+    slides[index].style.display = 'block';
+}
+
+function nextSlide() {
+    currentIndex++;
+    if (currentIndex >= totalSlides) {
+        currentIndex = 0;
     }
+    showSlide(currentIndex);
+}
 
-    function nextSlide() {
-        index = (index + 1) % slides.length;
-        showSlide();
+function prevSlide() {
+    currentIndex--;
+    if (currentIndex < 0) {
+        currentIndex = totalSlides - 1;
     }
+    showSlide(currentIndex);
+}
 
+document.addEventListener('DOMContentLoaded', function () {
+    showSlide(currentIndex);
     setInterval(nextSlide, 5000); // Change slide every 5 seconds
 });

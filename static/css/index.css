@@ -242,7 +242,81 @@ a:focus {
     }
 }
 /*Slider Ends*/
+/*sermon starts*/
 
+/* Styling for the title box */
+.title-box {
+  margin-bottom: 50px; /* Add margin bottom for spacing */
+    margin-top: 30px;
+}
+
+/* Styling for the title */
+.title-a {
+  font-size: 36px;
+  font-weight: bold;
+  color: midnightblue;
+  margin-bottom: 20px; /* Add margin bottom for spacing */
+}
+
+/* Styling for the line */
+.line-mf {
+  width: 100px; /* Set line width */
+  height: 3px; /* Set line height */
+  background-color: cornflowerblue;
+  margin: 0 auto 20px; /* Add margin bottom for spacing and center line */
+}
+
+/* Styling for the subtitle */
+.subtitle-a {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 0; /* Remove default margin bottom */
+}
+
+
+
+.service-box {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.service-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.service-content {
+  padding: 20px;
+}
+
+.s-title {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.s-description {
+  font-size: 16px;
+  color: #666;
+}
+
+.s-description ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.s-description li {
+  padding: 5px 0;
+}
+
+.text-center {
+  text-align: center;
+}
+
+
+/*Sermon Ends*/
 
 /*FOOTER STARTS*/
   .footer {

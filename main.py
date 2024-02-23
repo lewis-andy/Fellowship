@@ -64,6 +64,10 @@ class LoginForm(FlaskForm):
 def index():
     return render_template("index.html")
 
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
+
 
 @app.route("/about")
 def about():
@@ -132,7 +136,7 @@ def view_users():
 # function to delete users from  the table
 @app.route("/delete_user/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):
-    global users
+    users = [user_id]
     user_index = next((index for index, user in enumerate(users) if user["id"] == user_id), None)
     if user_index is not None:
         del users[user_index]

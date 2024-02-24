@@ -5,3 +5,5 @@ Flask-Bcrypt
 Flask-Login
 Flask-Migrate
 email-validator
+wtforms~=3.1.2
+SQLAlchemy~=2.0.27

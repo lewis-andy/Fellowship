@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sermons</title>
+    <!-- Bootstrap CSS link -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Animation CSS link -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        .card {
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: none;
+        }
+        .card-body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mt-5">Sermons</h1>
+        <div class="row mt-4">
+            {% for sermon in sermons %}
+            <div class="col-lg-4">
+                <div class="card animated fadeIn">
+                    <div class="card-header">
+                        <h5 class="card-title">{{ sermon.title }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text"><strong>Speaker:</strong> {{ sermon.speaker }}</p>
+                        <p class="card-text"><strong>Date:</strong> {{ sermon.date }}</p>
+                        <p class="card-text">{{ sermon.description }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js CDN links -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

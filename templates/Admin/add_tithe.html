@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tithing</title>
+</head>
+<body>
+
+<form method="post">
+    {{ form.csrf_token }}
+    <div>
+        {{ form.username.label }}: {{ form.username }}
+    </div>
+    <div>
+        {{ form.amount.label }}: {{ form.amount }}
+    </div>
+    <div>
+        {{ form.date.label }}: {{ form.date }}
+    </div>
+    <div>
+        {{ form.submit }}
+    </div>
+</form>
+
+</body>
+</html>

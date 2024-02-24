@@ -7,6 +7,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_migrate import Migrate  # Import Flask-Migrate
 from wtforms import BooleanField
+from wtforms.fields import DateField, TextAreaField
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, FloatField, SubmitField
 from wtforms.validators import DataRequired
@@ -24,6 +25,7 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
 
+# database model for users
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
@@ -39,11 +41,38 @@ def validate_email(field):
         raise ValidationError('Email already exists.')
 
 
+# database model to adding sermons
+class Sermon(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    speaker = db.Column(db.String(100), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    description = db.Column(db.Text, nullable=False)
+
+    def __repr__(self):
+        return f"Sermon('{self.title}', '{self.speaker}', '{self.date}')"
+
+
+# database model to add tithing records
+class TithingRecord(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    username = db.Column(db.String(100), nullable=False)  # Add username field
+    user = db.relationship('User', backref=db.backref('tithing_records', lazy=True))
+    amount = db.Column(db.Float, nullable=False)
+    date = db.Column(db.Date, nullable=False)
+
+    def __repr__(self):
+        return f"TithingRecord(user_id={self.user_id}, username={self.username}, amount={self.amount}, date={self.date})"
+
+
+# defines the pass words of the admin page
 admin_username = 'Lewis'
 admin_password = 'Andanje'
 admin_email = 'lewisandanje3@gmail.com'
 
 
+# define the class to registration db module
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -52,7 +81,7 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('submit')
 
 
-#   Login form very essential
+#   Login class form of the db module very essential
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
@@ -60,20 +89,47 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
+# class form to adding sermons
+class SermonForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    speaker = StringField('Speaker', validators=[DataRequired()])
+    date = DateField('Date', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired()])
+
+
+# class to tithing record form
+class TithingRecordForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    amount = FloatField('Amount', validators=[DataRequired()])
+    date = DateField('Date', validators=[DataRequired()])
+    submit = SubmitField('Add Tithing Record')
+
+
+# index html the loading page route
 @app.route("/index")
 def index():
     return render_template("index.html")
 
+
+# contact us route
 @app.route("/contact")
 def contact():
     return render_template("contact.html")
 
 
+# about page route
 @app.route("/about")
 def about():
     return render_template("about.html")
 
 
+@app.route("/display_sermon")
+def display_sermon():
+    sermons = Sermon.query.all()
+    return render_template("sermon.html", sermons=sermons)  # Pass sermons instead of Sermon
+
+
+# route page to the register form page. Defines the registration route details
 @app.route("/register", methods=["GET", "POST"])
 def register():
     form = RegistrationForm()
@@ -93,6 +149,7 @@ def register():
     return render_template("register.html", form=form)
 
 
+# it is the main route of the bage when user loads it it takes from here. define login system
 @app.route("/", methods=["GET", "POST"])
 def login():
     form = LoginForm()  # call the login form
@@ -119,14 +176,34 @@ def login():
     return render_template("login.html", form=form)
 
 
+# Admins page to add users to the system
 @app.route('/Admin/add_user')
 def add_user():
     if 'admin_logged_in' in session:
         return render_template('Admin/add_user.html')
     else:
-        return redirect(url_for('login'))
+        return redirect(url_for('login')) @ app.route('/add_sermon', methods=['GET', 'POST'])
 
 
+# route to the add_sermon add_sermon page
+@app.route('/Admin/add_sermon', methods=['GET', 'POST'])
+def add_sermon():
+    form = SermonForm()
+    if form.validate_on_submit():
+        sermon = Sermon(
+            title=form.title.data,
+            speaker=form.speaker.data,
+            date=form.date.data,
+            description=form.description.data
+        )
+        db.session.add(sermon)
+        db.session.commit()
+        return redirect(url_for('add_user'''))  # Redirect to home page after adding sermon
+
+    return render_template('Admin/add_sermon.html', form=form)
+
+
+# admin page to view the current users registered fetches it from the database.
 @app.route("/Admin/view_users")
 def view_users():
     users = User.query.all()
@@ -145,6 +222,31 @@ def delete_user(user_id):
         return jsonify({"message": "User not found"}), 404
 
 
+# code to add tithing record from admin panel
+@app.route('/add_tithe', methods=['GET', 'POST'])
+def add_tithe():
+    form = TithingRecordForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        user = User.query.filter_by(username=username).first()
+        if user:
+            tithing_record = TithingRecord(
+                user_id=user.id,
+                username=username,
+                amount=form.amount.data,
+                date=form.date.data
+            )
+            db.session.add(tithing_record)
+            db.session.commit()
+            flash('Tithing record added successfully', 'success')
+            return redirect(url_for('add_tithe'))
+        else:
+            flash('User does not exist', 'danger')
+            return redirect(url_for('add_user'))
+    return render_template('Admin/add_tithe.html', form=form)
+
+
+# a code to call off the program
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

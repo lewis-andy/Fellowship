@@ -255,7 +255,8 @@ a:focus {
   font-size: 36px;
   font-weight: bold;
   color: midnightblue;
-  margin-bottom: 20px; /* Add margin bottom for spacing */
+  margin-bottom: 10px;
+    margin-top: 10px;/* Add margin bottom for spacing */
 }
 
 /* Styling for the line */
@@ -318,6 +319,7 @@ a:focus {
 
 /*Sermon Ends*/
 
+
 /*FOOTER STARTS*/
   .footer {
     background-color: midnightblue;
@@ -337,9 +339,15 @@ a:focus {
       -ms-flex-align: center;
           align-items: center;
 }
-
+.about_section .img_container .img-box {
+  width: 550px; /* Set the desired width */
+  height: 300px; /* Set the desired height */
+}
 .about_section .img_container .img-box img {
   width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .about_section .detail-box {
@@ -374,66 +382,73 @@ a:focus {
 
 /*About Ends*/
 
-/* Bottom most container starts */
+/* Custom CSS styles */
 
+/* Top Container styles */
+.top-container {
+    margin-top: 5px;
+  background-color: #f8f9fa;
+  padding: 20px 0;
+}
 
-/* Bottom Container */
+.containerr {
+  text-align: center;
+}
 
+.scroll-trigger {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.word {
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 0;
+  display: inline-block;
+  margin-right: 20px; /* Adjust as needed */
+  animation: moveRight 5s linear infinite; /* Adjust duration and timing function as needed */
+}
+
+@keyframes moveRight {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Bottom Container styles */
 .bottom-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    background-color: #333;
-    color: white;
-    padding: 50px 0;
-    margin-bottom: 0;
+  background-color: #343a40;
+  color: #fff;
+  padding: 50px 0;
 }
 
 .column {
-    flex-basis: 25%;
-    text-align: center;
-    padding: 20px;
+  margin-bottom: 30px;
 }
 
 .column h3 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: dodgerblue;
-}
-
-.column p {
-    font-size: 18px;
-}
-
-.social-container {
-    margin-top: 20px;
+  color: #fff;
 }
 
 .social-icon {
-    font-size: 24px;
-    margin-right: 10px;
-    color: white;
-    transition: color 0.3s ease;
+  font-size: 24px;
+  margin-right: 10px;
 }
 
-.social-icon:hover {
-    color: lightblue;
+.subscribe-button {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
 }
 
-/* Media Queries */
-
-@media screen and (max-width: 992px) {
-    .offer_section .content-box {
-        max-width: 400px;
-    }
+.subscribe-button:hover {
+  background-color: #218838;
 }
-
-@media screen and (max-width: 768px) {
-    .slider {
-        height: 400px; /* Adjust height for smaller screens */
-    }
-}
-/* End bottom container */
 
 .container {
   max-width: 1200px;
@@ -507,3 +522,6 @@ a:focus {
     height: 150px; /* Adjust the height for smaller screens */
   }
 }
+
+
+

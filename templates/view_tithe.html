@@ -64,18 +64,6 @@ welcome: {{ username }}
             </nav>
         </div>
     </div>
-    <div class="container mt-5">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="alert alert-info">
-                    <ul>
-                    {% for message in messages %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-        {% endwith %}
 </header>
 <!-- end header section -->
 
@@ -106,33 +94,32 @@ welcome: {{ username }}
         </div>
     </div>
 </section>
-
-<!-- Top Container -->
-<div class="container-fluid top-container">
-  <div class="containerr">
-    <div class="scroll-trigger">
-      <span class="word">Sunday Service Program</span>
-    </div>
-  </div>
-</div>
-
-  <!-- Display Sunday Service Items -->
-        <div class="sunday-service-items">
-            <h2>Sunday Service Items</h2>
-            <ul>
-                {% for item in sunday_service_items %}
-                    <li>
-                        <h3>{{ item.title }}</h3>
-                        <p>{{ item.description }}</p>
-                        <!-- Display other attributes as needed -->
-                    </li>
+<!-- slider ends -->
+    <div class="container">
+        <h1 class="mt-5">Tithing Records</h1>
+        <table class="table mt-3">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in tithing_records %}
+                <tr>
+                    <td>{{ record.date }}</td>
+                    <td>{{ record.amount }}</td>
+                </tr>
                 {% endfor %}
-            </ul>
-        </div>
-    </main>
-<!-- End Top Container -->
-
-
+                <tr>
+                    <td colspan="2">Added by: Lewis</td>
+                </tr>
+            </tbody>
+        </table>
+        {% for record in tithing_records %}
+    <a href="{{ url_for('download_tithing_records_pdf', tithing_id=record.id) }}">Download PDF</a>
+{% endfor %}
+    </div>
 
 <!-- Bottom Container -->
 <div class="container bottom-container">
@@ -182,16 +169,11 @@ welcome: {{ username }}
 <footer class="footer">
   &copy; 2024 All rights reserved by Lewis
 </footer>
-
-<!-- Bootstrap JS and Popper.js CDN links -->
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<!-- Wow.js CDN link -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
-<!-- Initialize Wow.js -->
-<script src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-<script src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js" type="module"></script>
-<script src="script.js"></script> <!-- Your custom JavaScript file -->
+    <!-- Bootstrap JavaScript (optional, if you need Bootstrap's JS features) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Your custom JavaScript code (if needed) -->
+    <script>
+        // Add your JavaScript code here if necessary
+    </script>
 </body>
 </html>

@@ -16,6 +16,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 </head>
 <body>
+
+<div class="container mt-5">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-info">
+                    <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endwith %}
+
 <div class="login-container">
         <form class="login-form" method="POST" action="{{ url_for('login') }}">
             <h2>Login</h2>
@@ -39,7 +53,11 @@
         </p>
         </div>
         <p>{{ form.submit() }}</p>
-    <p> <p>Don't have an account? <a href="{{ url_for('register') }}">Register</a></p></a> </p>
+    <p> <p>Don't have an account? <a href="{{ url_for('register') }}">Register</a>
     </form>
+
+
+
+
 </body>
 </html>

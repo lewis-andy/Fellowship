@@ -2,29 +2,119 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sermons</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/css/index.css">
     <!-- Bootstrap CSS link -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS link -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <!-- Animation CSS link -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <style>
-        .card {
-            margin-bottom: 20px;
-        }
-        .card-header {
-            background-color: #f8f9fa;
-            border-bottom: none;
-        }
-        .card-body {
-            background-color: #ffffff;
-        }
-    </style>
+    <!-- js library for animation -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 </head>
 <body>
+
+
+<!-- header section starts -->
+<header class="header_section">
+    <div class="header_bottom">
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-lg custom_nav-container">
+                <div class="logo" style=" color: #cccccc">
+welcome: {{ username }}
+                </div>
+
+                <a class="navbar-brand" href="index.html">
+                    <span>
+
+                    </span>
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class=""></span>
+                </button>
+
+                <div class="collapse navbar-collapse ml-auto" id="navbarSupportedContent">
+                    <ul class="navbar-nav  ">
+
+                        <li class="nav-item ">
+                            <a class="nav-link" href="{{ url_for('index') }}">Home <span class="sr-only">(current)</span></a>
+                        </li>
+
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{{ url_for('about') }}"> About</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('display_sermon') }}"> Our sermons </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('view_tithing_records') }}">view contributions</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">Logout</a>
+                        </li>
+
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+<!-- end header section -->
+
+
+<!-- slider starts -->
+<section class="slider">
+    <div class="slide-wrapper">
+        <div class="slide">
+            <img src="../static/img/img1.jpg" alt="Slide 1">
+            <div class="slide-content">
+                <h2>Welcome to our Website</h2>
+                <p>This is a beautiful slider image with animated words.</p>
+            </div>
+        </div>
+        <div class="slide">
+            <img src="../static/img/cross.jpg" alt="Slide 2">
+            <div class="slide-content">
+                <h2>Explore Our Services</h2>
+                <p>We offer a wide range of services to meet your needs.</p>
+            </div>
+        </div>
+        <div class="slide">
+            <img src="../static/img/bible.jpg" alt="Slide 3">
+            <div class="slide-content">
+                <h2>Contact Us Today</h2>
+                <p>Feel free to reach out to us for any inquiries or assistance.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- slider ends -->
+
+<section id="service" class="services-mf route">
     <div class="container">
-        <h1 class="text-center mt-5">Sermons</h1>
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="title-box text-center">
+            <h3 class="title-a">
+              Sermons
+                <div class="line-mf"></div>
+            </h3>
+            <p class="subtitle-a">
+              in the list below you will find the church sermons to the page
+            </p>
+
+          </div>
+        </div>
+      </div>
+
+    <div class="container">
+        <h1 class="text-center mt-5"></h1>
         <div class="row mt-4">
             {% for sermon in sermons %}
             <div class="col-lg-4">
@@ -43,6 +133,54 @@
         </div>
     </div>
 
+    <!-- Bottom Container -->
+<div class="container bottom-container">
+  <div class="row">
+    <!-- Columns for bottom container -->
+    <div class="col-md-3">
+      <h3>Ack St Johns</h3>
+      <hr class="bg-white d-inline-block mb-4">
+      <p>Follow us on all social media platforms to be well informed of our new offers and exciting deals.</p>
+      <div class="social-container">
+        <a href="https://www.facebook.com" target="_blank" class="social-icon"><i class="fab fa-facebook"></i></a>
+        <a href="https://www.instagram.com" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.twitter.com" target="_blank" class="social-icon"><i class="fab fa-twitter"></i></a>
+        <a href="https://www.tiktok.com" target="_blank" class="social-icon"><i class="fab fa-tiktok"></i></a>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <h3>Contact Info</h3>
+      <hr class="bg-white d-inline-block mb-4">
+      <p>+254-456-7890</p>
+      <p>+254-222-3333</p>
+      <p>ackstjohnsemahene@gmail.com</p>
+    </div>
+    <div class="col-md-3">
+      <h3>Quick Links</h3>
+      <hr class="bg-white d-inline-block mb-4">
+      <p>→ Home</p>
+      <p>→ About</p>
+      <p>→ Service</p>
+      <p>→ Contact</p>
+      <p>→ Logout</p>
+    </div>
+    <div class="col-md-3">
+      <h3>Newsletter</h3>
+      <hr class="bg-white d-inline-block mb-4">
+      <p>Subscribe For the Latest Updates</p>
+      <form action="" method="post">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <button type="submit" class="subscribe-button">Subscribe</button>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- End Bottom Container -->
+
+<footer class="footer">
+  &copy; 2024 All rights reserved by Lewis
+</footer>
     <!-- Bootstrap JS and Popper.js CDN links -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>

@@ -6,7 +6,7 @@
     <title>Register</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/register.css') }}">
     <link rel="stylesheet" type="text/css" href="../static/css/index.css">
-     <!-- Bootstrap CSS link -->
+    <!-- Bootstrap CSS link -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome CSS link -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
@@ -16,32 +16,62 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 </head>
 <body>
-    <div class="container">
-        <h2>Register</h2>
-        <form method="POST" action="{{ url_for('register') }}">
-            {{ form.hidden_tag() }}
-            <p>
-                <label for="username">Username</label><br>
-                {{ form.username(size=32) }}<br>
-                {% for error in form.username.errors %}
-                    <span class="error">{{ error }}</span><br>
-                {% endfor %}
+
+
+<div class="container mt-5">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-info">
+                    <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endwith %}
+<div class="container">
+    <h2>Register</h2>
+    <form method="POST" action="{{ url_for('register') }}">
+        {{ form.hidden_tag() }}
+        <p>
+            <label for="username">Username</label><br>
+            {{ form.username(size=32) }}<br>
+            {% for error in form.username.errors %}
+                <span class="error">{{ error }}</span><br>
+            {% endfor %}
+        </p>
+        <p>
+            <label for="email">Email</label><br>
+            {{ form.email(size=32) }}<br>
+            {% for error in form.email.errors %}
+                <span class="error">{{ error }}</span><br>
+            {% endfor %}
+        </p>
+        <p>
+            <label for="password">Password</label><br>
+            {{ form.password(size=32) }}<br>
+            {% for error in form.password.errors %}
+                <span class="error">{{ error }}</span><br>
+            {% endfor %}
+        </p>
+        <!-- New confirm password field -->
+        <p>
+            <label for="confirm_password">Confirm Password</label><br>
+            <input type="password" id="confirm_password" name="confirm_password" required><br>
+            {% for error in form.confirm_password.errors %}
+                <span class="error">{{ error }}</span><br>
+            {% endfor %}
+        </p>
+
+     <p>
+                <label for="is_admin">Register as Admin</label>
+                {{ form.is_admin.label }}: {{ form.is_admin }}
+
             </p>
-            <p>
-                <label for="email">Email</label><br>
-                {{ form.email(size=32) }}<br>
-                {% for error in form.email.errors %}
-                    <span class="error">{{ error }}</span><br>
-                {% endfor %}
-            </p>
-            <p>
-                <label for="password">Password</label><br>
-                {{ form.password(size=32) }}<br>
-                {% for error in form.password.errors %}
-                    <span class="error">{{ error }}</span><br>
-                {% endfor %}
-            </p>
-            <p>{{ form.submit() }}</p>
+
+        <p>{{ form.submit() }}</p>
     </form>
+</div>
 </body>
 </html>

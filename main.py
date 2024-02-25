@@ -1,21 +1,17 @@
-from flask import Flask, render_template, redirect, url_for, flash, session
+from flask import Flask, render_template, redirect, url_for, flash, session, request, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, FloatField, DateField, TimeField, \
+    SelectField, BooleanField
+from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 from flask_bcrypt import Bcrypt
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from flask_migrate import Migrate  # Import Flask-Migrate
-from wtforms import BooleanField
-from wtforms.fields import DateField, TextAreaField
-from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, FloatField, SubmitField
-from wtforms.validators import DataRequired
-from flask import render_template, redirect, url_for, flash
-from datetime import datetime
-from wtforms import SelectField
-from flask import render_template, request, jsonify
 from sqlalchemy.orm import joinedload
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from io import BytesIO
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
@@ -23,25 +19,52 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'your_secret_key'  # Change this to a secure random key
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+login_manager.init_app(app)
 
 
-# database model for users
-class User(db.Model):
+# database model for normal users
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(60), nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
-        return f"User('{self.username}', '{self.email}')"
+        return '<User {}>'.format(self.username)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 
-def validate_email(field):
-    if User.query.filter_by(email=field.data).first():
-        raise ValidationError('Email already exists.')
+# data model for admin users
+class Admin(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128))
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def get_id(self):
+        return str(self.id)
+
+        # Define the is_active property
+
+    @property
+    def is_active(self):
+        return True
 
 
-# database model to adding sermons
+# database model to add sermons
 class Sermon(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -57,39 +80,48 @@ class Sermon(db.Model):
 class TithingRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    username = db.Column(db.String(100), nullable=False)  # Add username field
     user = db.relationship('User', backref=db.backref('tithing_records', lazy=True))
     amount = db.Column(db.Float, nullable=False)
     date = db.Column(db.Date, nullable=False)
 
     def __repr__(self):
-        return f"TithingRecord(user_id={self.user_id}, username={self.username}, amount={self.amount}, date={self.date})"
+        return f"TithingRecord(user_id={self.user_id}, amount={self.amount}, date={self.date})"
 
 
-# defines the pass words of the admin page
-admin_username = 'Lewis'
-admin_password = 'Andanje'
-admin_email = 'lewisandanje3@gmail.com'
+class SundayServiceItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    time = db.Column(db.Time, nullable=False)
+    location = db.Column(db.String(100))
+    category = db.Column(db.String(50), nullable=False)
 
 
-# define the class to registration db module
+# Define forms for registration, login, sermon, tithing record, and service item
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('submit')
+    is_admin = BooleanField('Register as admin')
+    submit = SubmitField('Register')
 
+    def validate_username(self, username):
+        if User.query.filter_by(username=username.data).first():
+            raise ValidationError('Username already taken.')
 
-#   Login class form of the db module very essential
+    def validate_email(self, email):
+        if User.query.filter_by(email=email.data).first():
+            raise ValidationError('Email already registered.')
+
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    submit = SubmitField('Login')
 
 
-# class form to adding sermons
 class SermonForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     speaker = StringField('Speaker', validators=[DataRequired()])
@@ -97,7 +129,6 @@ class SermonForm(FlaskForm):
     description = TextAreaField('Description', validators=[DataRequired()])
 
 
-# class to tithing record form
 class TithingRecordForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     amount = FloatField('Amount', validators=[DataRequired()])
@@ -105,88 +136,117 @@ class TithingRecordForm(FlaskForm):
     submit = SubmitField('Add Tithing Record')
 
 
-# index html the loading page route
+class AddServiceItemForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    date = DateField('Date', validators=[DataRequired()])
+    time = TimeField('Time', validators=[DataRequired()])
+    location = StringField('Location')
+    category = SelectField('Category', choices=[('Worship', 'Worship'), ('Sermon', 'Sermon'), ('Prayer', 'Prayer')],
+                           validators=[DataRequired()])
+    submit = SubmitField('Add Service Item')
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+# Routes for different pages
+
 @app.route("/index")
 def index():
-    return render_template("index.html")
+    sunday_service_items = SundayServiceItem.query.all()
+
+    return render_template("index.html", username=current_user.username if current_user.is_authenticated else None,
+                           sunday_service_items=sunday_service_items)
 
 
-# contact us route
-@app.route("/contact")
-def contact():
-    return render_template("contact.html")
-
-
-# about page route
-@app.route("/about")
-def about():
-    return render_template("about.html")
-
-
-@app.route("/display_sermon")
-def display_sermon():
-    sermons = Sermon.query.all()
-    return render_template("sermon.html", sermons=sermons)  # Pass sermons instead of Sermon
-
-
-# route page to the register form page. Defines the registration route details
 @app.route("/register", methods=["GET", "POST"])
 def register():
     form = RegistrationForm()
-    if request.method == "POST":
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
-
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-
-        user = User(username=username, email=email, password=hashed_password)
-        db.session.add(user)
-        db.session.commit()
-
-        flash('Your account has been created! You are now able to log in', 'success')
+    if form.validate_on_submit():
+        # Check if the user wants to register as an admin
+        if form.is_admin.data:
+            # Create admin user
+            admin = Admin(username=form.username.data, email=form.email.data)
+            admin.set_password(form.password.data)
+            db.session.add(admin)
+            db.session.commit()
+            flash('Admin user created successfully!', 'success')
+        else:
+            # Create regular user
+            user = User(username=form.username.data, email=form.email.data)
+            user.set_password(form.password.data)
+            db.session.add(user)
+            db.session.commit()
+            flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
-    return render_template("register.html", form=form)
+
+    return render_template('register.html', form=form)
 
 
-# it is the main route of the bage when user loads it it takes from here. define login system
 @app.route("/", methods=["GET", "POST"])
 def login():
-    form = LoginForm()  # call the login form
-    if request.method == "POST":
-        email = request.form['email']
-        password = request.form['password']
-
-        user = User.query.filter_by(email=email).first()
-
-        # Check if admin credentials are entered
-        if email == admin_email and password == admin_password:
-            session['admin_logged_in'] = True
-            return redirect(url_for('add_user'))
-
-        # performing login authentication assuming all neccessary logic
-
-        if user and bcrypt.check_password_hash(user.password, password):
-            flash('Login successful!', 'success')
-            # Here you can redirect to another page after login
-            return redirect(url_for('index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        # Check if the submitted credentials match admin credentials
+        admin = Admin.query.filter_by(email=form.email.data).first()
+        if admin and admin.check_password(form.password.data):
+            login_user(admin)
+            flash('You have been logged in as an admin!', 'success')
+            return redirect(url_for('add_user'))  # Redirect to admin dashboard
+        # If admin credentials are not matched, proceed with regular user login
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and user.check_password(form.password.data):
+            user.set_password(form.password.data)
+            db.session.commit()
+            login_user(user)
+            flash('You have been logged in!', 'success')
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('index'))
         else:
-            flash('Login unsuccessful. Please check email and password', 'danger')
+            flash('Login unsuccessful. Please check email and password.', 'danger')
+    return render_template('login.html', title='Login', form=form)
+
+
+@app.route("/admin_login", methods=["GET", "POST"])
+def admin_login():
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        if form.email.data == admin_email and bcrypt.check_password_hash(admin_password_hash, form.password.data):
+            session['admin_logged_in'] = True
+            flash('Successfully logged in as admin', 'success')
+            return redirect(url_for('add_user'))
+        else:
+            flash('Admin login unsuccessful. Please check email and password', 'danger')
 
     return render_template("login.html", form=form)
 
 
-# Admins page to add users to the system
-@app.route('/Admin/add_user')
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out', 'success')
+    return redirect(url_for('login'))
+
+
+@app.route('/add_user')
+@login_required
 def add_user():
-    if 'admin_logged_in' in session:
-        return render_template('Admin/add_user.html')
-    else:
-        return redirect(url_for('login')) @ app.route('/add_sermon', methods=['GET', 'POST'])
+    return render_template('Admin/add_user.html')
 
 
-# route to the add_sermon add_sermon page
-@app.route('/Admin/add_sermon', methods=['GET', 'POST'])
+@app.route('/View_users')
+@login_required
+def view_users():
+    users = User.query.all()
+    return render_template('Admin/view_users.html', users=users)
+
+
+@app.route('/add sermon', methods=['POST'])
 def add_sermon():
     form = SermonForm()
     if form.validate_on_submit():
@@ -198,32 +258,48 @@ def add_sermon():
         )
         db.session.add(sermon)
         db.session.commit()
-        return redirect(url_for('add_user'''))  # Redirect to home page after adding sermon
-
+        return redirect(url_for('add_service'''))  # Redirect to home page after adding sermon
     return render_template('Admin/add_sermon.html', form=form)
 
 
-# admin page to view the current users registered fetches it from the database.
-@app.route("/Admin/view_users")
-def view_users():
-    users = User.query.all()
-    return render_template("Admin/view_users.html", users=users)
+@app.route('/add_service')
+@login_required
+def add_service():
+    if request.method == 'POST':
+        title = request.form['title']
+        description = request.form['description']
+        date = request.form['date']
+        time = request.form['time']
+        location = request.form['location']
+        category = request.form['category']
 
+        new_service_item = SundayServiceItem(title=title, description=description, date=date, time=time,
+                                             location=location, category=category)
+        db.session.add(new_service_item)
+        db.session.commit()
+        flash('Service item added successfully!', 'success')
+        return redirect(url_for('add_service'))
 
-# function to delete users from  the table
-@app.route("/delete_user/<int:user_id>", methods=["DELETE"])
-def delete_user(user_id):
-    users = [user_id]
-    user_index = next((index for index, user in enumerate(users) if user["id"] == user_id), None)
-    if user_index is not None:
-        del users[user_index]
-        return jsonify({"message": "User deleted successfully"}), 200
+    return render_template('Admin/add_service.html')
+
+@app.route('/admin/dashboard')
+@login_required
+def admin_dashboard():
+    if current_user.is_authenticated and isinstance(current_user, Admin):
+        # Logic for admin dashboard
+        return render_template('Admin/add_user.html')
     else:
-        return jsonify({"message": "User not found"}), 404
+        flash('You are not authorized to access this page.', 'danger')
+        return redirect(url_for('login'))
 
 
-# code to add tithing record from admin panel
-@app.route('/add_tithe', methods=['GET', 'POST'])
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+
+@app.route("/add_tithe", methods=["GET", "POST"])
+@login_required
 def add_tithe():
     form = TithingRecordForm()
     if form.validate_on_submit():
@@ -241,12 +317,58 @@ def add_tithe():
             flash('Tithing record added successfully', 'success')
             return redirect(url_for('add_tithe'))
         else:
-            flash('User does not exist', 'danger')
+            flash('User does not exist add new user', 'danger')
             return redirect(url_for('add_user'))
     return render_template('Admin/add_tithe.html', form=form)
 
 
-# a code to call off the program
+@app.route("/view_tithing_records")
+@login_required
+def view_tithing_records():
+    tithing_records = current_user.tithing_records
+    return render_template("view_tithe.html", tithing_records=tithing_records)
+
+
+@app.route('/download_tithing_records_pdf/<int:tithing_id>')
+def download_tithing_records_pdf(tithing_id):
+    tithing_record = TithingRecord.query.get(tithing_id)
+    pdf_data = generate_pdf(tithing_record)
+
+    response = make_response(pdf_data)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = f'attachment; filename=tithing_record_{tithing_id}.pdf'
+
+    return response
+
+
+def generate_pdf(tithing_record):
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer)
+
+    # Add tithing record data to the PDF
+    p.drawString(100, 750, f"Amount: ${tithing_record.amount}")
+    p.drawString(100, 720, f"Date: {tithing_record.date}")
+
+    # Check if the 'username' attribute exists in the tithing_record object
+    if hasattr(tithing_record, 'username'):
+        p.drawString(100, 690, f"Added by: {tithing_record.username}")
+    else:
+        p.drawString(100, 690, "Added by: Anonymous")
+
+    p.showPage()
+    p.save()
+    buffer.seek(0)
+    return buffer
+
+
+@app.route('/sermon')
+@login_required
+def display_sermon():
+    sermons = Sermon.query.all()
+    return render_template('sermon.html', sermons=sermons)
+
+
+# Ensure this is at the end of your script to run the application
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

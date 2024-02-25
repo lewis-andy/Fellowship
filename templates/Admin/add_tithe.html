@@ -2,25 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tithing</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-
+<h1 class="mb-4">Add tithing records</h1>
 <form method="post">
     {{ form.csrf_token }}
-    <div>
-        {{ form.username.label }}: {{ form.username }}
+    <div class="form-group">
+        {{ form.username.label }}: {{ form.username(class="form-control") }}
     </div>
-    <div>
-        {{ form.amount.label }}: {{ form.amount }}
+    <div class="form-group">
+        {{ form.amount.label }}: {{ form.amount(class="form-control") }}
     </div>
-    <div>
-        {{ form.date.label }}: {{ form.date }}
+    <div class="form-group">
+        {{ form.date.label }}: {{ form.date(class="form-control") }}
     </div>
-    <div>
-        {{ form.submit }}
+    <div class="form-group">
+        {{ form.submit(class="btn btn-primary") }}
     </div>
 </form>
+
+<!-- Bootstrap JavaScript (optional, if you need Bootstrap's JS features) -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Your custom JavaScript code (if needed) -->
+<script>
+    // Add your JavaScript code here if necessary
+</script>
 
 </body>
 </html>

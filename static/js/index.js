@@ -32,3 +32,15 @@ document.addEventListener('DOMContentLoaded', function () {
     showSlide(currentIndex);
     setInterval(nextSlide, 5000); // Change slide every 5 seconds
 });
+
+
+window.addEventListener('scroll', function() {
+  var element = document.querySelector('.scroll-trigger');
+  var position = element.getBoundingClientRect();
+  var isVisible = position.top < window.innerHeight && position.bottom >= 0;
+  if (isVisible) {
+    element.classList.add('visible');
+  } else {
+    element.classList.remove('visible');
+  }
+});

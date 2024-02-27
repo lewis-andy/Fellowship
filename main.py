@@ -12,6 +12,7 @@ from sqlalchemy.orm import joinedload
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from io import BytesIO
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
@@ -258,18 +259,21 @@ def add_sermon():
         )
         db.session.add(sermon)
         db.session.commit()
-        return redirect(url_for('add_service'''))  # Redirect to home page after adding sermon
+        flash('sermon added successfully')
+        return redirect(url_for('add_sermon'))  # Redirect to home page after adding sermon
     return render_template('Admin/add_sermon.html', form=form)
 
 
-@app.route('/add_service')
+@app.route('/add_service', methods=['GET', 'POST'])
 @login_required
 def add_service():
     if request.method == 'POST':
         title = request.form['title']
         description = request.form['description']
-        date = request.form['date']
-        time = request.form['time']
+        date_str = request.form['date']
+        date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        time_str = request.form['time']  # Get the time string from the form
+        time = datetime.strptime(time_str, '%H:%M').time()  # Convert the string to a Python time object
         location = request.form['location']
         category = request.form['category']
 

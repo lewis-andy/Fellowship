@@ -13,7 +13,14 @@
     <!-- Animation CSS link -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css" rel="stylesheet">
     <!-- js library for animation -->
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+<style>
+     .card-brown {
+        background-color: #795548; /* Brown color code */
+        color: #fff; /* Text color */
+    }
+     </style>
 </head>
 <body>
 
@@ -116,20 +123,28 @@ welcome: {{ username }}
   </div>
 </div>
 
-  <!-- Display Sunday Service Items -->
-        <div class="sunday-service-items">
-            <h2>Sunday Service Items</h2>
-            <ul>
-                {% for item in sunday_service_items %}
-                    <li>
-                        <h3>{{ item.title }}</h3>
-                        <p>{{ item.description }}</p>
-                        <!-- Display other attributes as needed -->
-                    </li>
-                {% endfor %}
-            </ul>
+<main>
+    <!-- Display Sunday Service Items -->
+    <div class="container">
+        <h2 class="mt-4">Sunday Service Items</h2>
+        <div class="d-flex flex-wrap justify-content-between mt-4">
+            {% for item in sunday_service_items %}
+            <div class="card mb-4" style="width: 18rem;">
+                <div class="card-body card-brown">
+                    <h5 class="card-title">{{ item.title }}</h5>
+                    <p class="card-text">{{ item.description }}</p>
+                    <p class="card-text"><strong>Date:</strong> {{ item.date }}</p>
+                    <p class="card-text"><strong>Time:</strong> {{ item.time }}</p>
+                    <p class="card-text"><strong>Location:</strong> {{ item.location }}</p>
+                    <p class="card-text"><strong>Category:</strong> {{ item.category }}</p>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-    </main>
+    </div>
+</main>
+
+
 <!-- End Top Container -->
 
 

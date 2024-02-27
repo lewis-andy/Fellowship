@@ -113,25 +113,25 @@ welcome: {{ username }}
         </div>
       </div>
 
-    <div class="container">
-        <h1 class="text-center mt-5"></h1>
-        <div class="row mt-4">
-            {% for sermon in sermons %}
-            <div class="col-lg-4">
-                <div class="card animated fadeIn">
-                    <div class="card-header">
-                        <h5 class="card-title">{{ sermon.title }}</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text"><strong>Speaker:</strong> {{ sermon.speaker }}</p>
-                        <p class="card-text"><strong>Date:</strong> {{ sermon.date }}</p>
-                        <p class="card-text">{{ sermon.description }}</p>
-                    </div>
+   <div class="container">
+    <h1 class="text-center mt-5">Sermons</h1>
+    <div class="row mt-4">
+        {% for sermon in sermons %}
+        <div class="col-lg-4">
+            <div class="card sermon-card animated fadeIn">
+                <div class="card-header">
+                    <h5 class="card-title">{{ sermon.title }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text"><strong>Speaker:</strong> {{ sermon.speaker }}</p>
+                    <p class="card-text"><strong>Date:</strong> {{ sermon.date }}</p>
+                    <p class="card-text">{{ sermon.description }}</p>
                 </div>
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
     </div>
+</div>
 
     <!-- Bottom Container -->
 <div class="container bottom-container">

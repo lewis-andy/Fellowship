@@ -286,6 +286,33 @@ def add_service():
 
     return render_template('Admin/add_service.html')
 
+
+# Route for editing a service item
+@app.route('/edit_service_item/<int:item_id>', methods=['GET', 'POST'])
+def edit_service_item(item_id):
+    service_item = SundayServiceItem.query.get_or_404(item_id)
+    form = AddServiceItemForm(obj=service_item)
+    if form.validate_on_submit():
+        service_item.title = form.title.data
+        service_item.description = form.description.data
+        service_item.date = form.date.data
+        service_item.time = form.time.data
+        service_item.location = form.location.data
+        service_item.category = form.category.data
+        db.session.commit()
+        return redirect(url_for('view_service_items'))
+    return render_template('Admin/add_service.html', form=form, service_item=service_item)
+
+
+# Route for deleting a service item
+@app.route('/delete_service_item/<int:item_id>', methods=['POST'])
+def delete_service_item(item_id):
+    service_item = SundayServiceItem.query.get_or_404(item_id)
+    db.session.delete(service_item)
+    db.session.commit()
+    return redirect(url_for('view_service_items'))
+
+
 @app.route('/admin/dashboard')
 @login_required
 def admin_dashboard():

@@ -64,6 +64,19 @@ welcome: {{ username }}
             </nav>
         </div>
     </div>
+    <div class="container mt-5">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-info">
+                    <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
 </header>
 <!-- end header section -->
 
@@ -134,50 +147,65 @@ welcome: {{ username }}
 
 
   <!-- end about section -->
-
 <!-- Bottom Container -->
-
-    <div class="bottom-container">
-
-        <!-- Columns for bottom container -->
-
-        <div class="column">
-            <h3>Ack St John's</h3>
-            <hr class="bg-white d-inline-block mb-4" style="width: 60px; height: 2px;">
-            <p>Follow us on all social media platforms to be well informed of our new offers and exciting deals.</p>
-            <div class="social-container">
-                <a href="https://www.facebook.com" target="_blank" class="social-icon"><i class="fab fa-facebook" style="color: #3b5998;"></i></a>
-                <a href="https://www.instagram.com" target="_blank" class="social-icon"><i class="fab fa-instagram" style="color: #e4405f;"></i></a>
-                <a href="https://www.twitter.com" target="_blank" class="social-icon"><i class="fab fa-twitter" style="color: #1da1f2;"></i></a>
-                <a href="https://www.tiktok.com" target="_blank" class="social-icon"><i class="fab fa-tiktok" style="color: #d34f4f;"></i></a>
-
-            </div>
-        </div>
-        <div class="column">
-            <h3>Contact Info</h3>
-            <hr class="bg-white d-inline-block mb-4" style="width: 60px; height: 2px;">
-            <p>+254-456-7890</p>
-            <p>+254-222-3333</p>
-            <p>ackstjohnsemahene@gmail.com</p>
-        </div>
-        <div class="column">
-            <h3>Quick Links</h3>
-            <hr class="bg-white d-inline-block mb-4" style="width: 60px; height: 2px;">
-            <p>→ Home</p>
-            <p>→ About</p>
-            <p>→ Services</p>
-            <p>→ >contacts</p>
-        </div>
-        <div class="column">
-            <h3>Newsletter</h3>
-            <hr class="bg-white d-inline-block mb-4" style="width: 60px; height: 2px;">
-            <p>Subscribe For the Latest Updates</p>
-            <form action="" method="post">
-                <label for="email">Email:</label>
-                <input type="email" name="email" required>
-                <button type="submit" class="subscribe-button">Subscribe</button>
-            </form>
-        </div>
+<div class="container bottom-container">
+  <div class="row">
+    <!-- Columns for bottom container -->
+    <div class="col-md-3">
+      <h3>Ack St Johns</h3>
+      <hr class="bg-white d-inline-block mb-4">
+      <p>Follow us on all social media platforms to be well informed of our new offers and exciting deals.</p>
+      <div class="social-container">
+        <a href="https://www.facebook.com" target="_blank" class="social-icon"><i class="fab fa-facebook"></i></a>
+        <a href="https://www.instagram.com" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.twitter.com" target="_blank" class="social-icon"><i class="fab fa-twitter"></i></a>
+        <a href="https://www.tiktok.com" target="_blank" class="social-icon"><i class="fab fa-tiktok"></i></a>
+      </div>
     </div>
+    <div class="col-md-3">
+      <h3>Contact Info</h3>
+      <hr class="bg-white d-inline-block mb-4">
+      <p>+254-456-7890</p>
+      <p>+254-222-3333</p>
+      <p>ackstjohnsemahene@gmail.com</p>
+    </div>
+    <div class="col-md-3">
+      <h3>Quick Links</h3>
+      <hr class="bg-white d-inline-block mb-4">
+      <p>→ Home</p>
+      <p>→ About</p>
+      <p>→ Service</p>
+      <p>→ Contact</p>
+      <p>→ Logout</p>
+    </div>
+    <div class="col-md-3">
+      <h3>Newsletter</h3>
+      <hr class="bg-white d-inline-block mb-4">
+      <p>Subscribe For the Latest Updates</p>
+      <form action="" method="post">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <button type="submit" class="subscribe-button">Subscribe</button>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- End Bottom Container -->
+
+<footer class="footer">
+  &copy; 2024 All rights reserved by Lewis
+</footer>
+
+
+<!-- Bootstrap JS and Popper.js CDN links -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Wow.js CDN link -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+<!-- Initialize Wow.js -->
+<script src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<script src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js" type="module"></script>
+<script src="script.js"></script>
 </body>
 </html>

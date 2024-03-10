@@ -304,13 +304,18 @@ def edit_service_item(item_id):
     return render_template('Admin/add_service.html', form=form, service_item=service_item)
 
 
-# Route for deleting a service item
 @app.route('/delete_service_item/<int:item_id>', methods=['POST'])
 def delete_service_item(item_id):
-    service_item = SundayServiceItem.query.get_or_404(item_id)
-    db.session.delete(service_item)
-    db.session.commit()
-    return redirect(url_for('view_service_items'))
+    try:
+        service_item = SundayServiceItem.query.get_or_404(item_id)
+        db.session.delete(service_item)
+        db.session.commit()
+        print("Item deleted successfully")
+        return redirect(url_for('view_service_items'))
+    except Exception as e:
+        print("Error occurred during deletion:", e)
+        db.session.rollback()  # Rollback the transaction in case of error
+        return "Error occurred during deletion"
 
 
 @app.route('/admin/dashboard')
@@ -397,6 +402,13 @@ def generate_pdf(tithing_record):
 def display_sermon():
     sermons = Sermon.query.all()
     return render_template('sermon.html', sermons=sermons)
+
+
+# Define the custom 500 error handler
+@app.errorhandler(500)
+def internal_server_error(e):
+    # Render the error template
+    return render_template('error.html'), 500
 
 
 # Ensure this is at the end of your script to run the application

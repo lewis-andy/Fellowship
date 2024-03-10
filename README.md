@@ -12,7 +12,7 @@ Welcome to the Church Project! This project is a web application built to facili
 
 ## Technologies Used
 
-- **Backend:** Flask framework with Python for server-side logic and MySQL database for data storage.
+- **Backend:** Flask framework with Python for server-side logic and MySQL database for data storage, use werkzeug security to hash passwords
 - **Frontend:** HTML, CSS, and JavaScript for the user interface.
 - **Dependency Management:** Pip for Python package management.
 

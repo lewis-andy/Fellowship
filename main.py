@@ -234,14 +234,15 @@ def logout():
     return redirect(url_for('login'))
 
 
+# route to add user
 @app.route('/add_user')
-@login_required
+# @login_required
 def add_user():
     return render_template('Admin/add_user.html')
 
 
 @app.route('/View_users')
-@login_required
+# @login_required
 def view_users():
     users = User.query.all()
     return render_template('Admin/view_users.html', users=users)
@@ -375,6 +376,36 @@ def download_tithing_records_pdf(tithing_id):
     response.headers['Content-Disposition'] = f'attachment; filename=tithing_record_{tithing_id}.pdf'
 
     return response
+
+
+# route to delete users.
+@app.route('/delete_user/<int:user_id>', methods=['POST'])
+@login_required
+def delete_user(user_id):
+    user = User.session.get(User, user_id)
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        flash('User deleted successfully.', 'success')
+        return redirect(url_for('view_users'))
+    else:
+        return "User not found", 404
+        # return redirect(url_for('view_users'))
+        # # # Ensure only admin users can delete users
+    # # if current_user.role != 'admin':
+    # #     abort(403)  # Forbidden
+    # #
+    # # # Find the user by ID
+    # # user = User.query.get(user_id)
+    # # if not user:
+    # #     abort(404)  # User not found
+    #
+    # # Delete the user
+    # db.session.delete(user)
+    # db.session.commit()
+    #
+    # flash('User deleted successfully.', 'success')
+    # return redirect(url_for('view_users'))
 
 
 def generate_pdf(tithing_record):
